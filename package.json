@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "Playground for Typescript",
   "main": "index.js",
+  "packageManager": "pnpm@8.15.2",
   "scripts": {
-    "test": "eslint . --ext .ts && jest"
+    "test": "eslint . --ext .ts && jest --collectCoverage"
   },
   "repository": {
     "type": "git",
