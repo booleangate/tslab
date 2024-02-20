@@ -144,7 +144,20 @@ class BinaryTree<T extends Comparable<T> | number | string> implements Tree<T> {
       throw new Error(`${i} is out of bounds [0, ${this._size})`);
     }
 
-    return this;
+    const leftSize = this._left?._size ?? 0;
+
+    if (i == leftSize) {
+      return this;
+    }
+    if (i < leftSize) {
+      return this._left!.at(i);
+    }
+    if (i > leftSize && this._right) {
+      return this._right.at(i - leftSize - 1);
+    }
+
+    // Should™ never happen.
+    throw new Error("Invalid tree state");
   }
 
   first(): Tree<T> {
