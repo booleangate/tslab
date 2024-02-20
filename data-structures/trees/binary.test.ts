@@ -323,21 +323,50 @@ describe("size", () => {
       tree.insert(3).insert(2).insert(4);
 
       tree.delete();
+
+      // new root node should have total tree size
+      expect(tree.size).toEqual(3);
+      expect(tree.previous()!.size).toEqual(2);
+      expect(tree.first()!.size).toEqual(1);
+    });
+
+    test("delete branch", () => {
+      const tree = new BinaryTree<number>(5);
+      tree.insert(3).insert(2).insert(4);
+
+      tree.find(3)!.delete();
+
+      expect(tree.size).toEqual(3);
+
+      // branch node: not a great way to get at the branch node and this assertion will be finiky if delete swapping
+      // implementation changes.  The extra value assertion helps us understand which node we're expecting in the branch
+      // position.
+      expect(tree.first()!.value).toEqual(2);
+      expect(tree.first()!.size).toEqual(2);
+
+      // leaf (see same not about about finikiness).
+      expect(tree.previous()!.value).toEqual(4);
+      expect(tree.previous()!.size).toEqual(1);
+    });
+
+    test("delete leaf", () => {
+      const tree = new BinaryTree<number>(5);
+      tree.insert(3).insert(2).insert(4);
+
+      tree.first().delete();
       for (const node of tree.traverse()) {
-        // new root node should have total tree size
-        if (node.value === tree.value) {
+        if (node.value === 5) {
+          // root
           expect(node.size).toEqual(3);
-        }
-        // Leaves should have a size of 1
-        else {
+        } else if (node.value === 3) {
+          // branch
+          expect(node.size).toEqual(2);
+        } else {
+          // leaf
           expect(node.size).toEqual(1);
         }
       }
     });
-
-    test("delete branch", () => {});
-
-    test("delete leaf", () => {});
   });
 });
 

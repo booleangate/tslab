@@ -52,21 +52,21 @@ class BinaryTree<T extends Comparable<T> | number | string> implements Tree<T> {
   }
 
   delete(val?: T): boolean {
-    if (this._size === 1) {
+    if (this._size === 1 && this._parent === undefined) {
       throw new Error("Cannot delete last node");
     }
 
     const target = val ? (this.find(val) as BinaryTree<T>) : this;
-    const deleted = target?._delete();
-
-    if (deleted) {
-      --this._size;
+    if (!target) {
+      return false;
     }
 
-    return deleted;
+    target._delete();
+
+    return true;
   }
 
-  private _delete(): boolean {
+  private _delete() {
     // Is leaf
     if (this._parent && !this._left && !this._right) {
       if (this.isLeft()) {
@@ -74,8 +74,16 @@ class BinaryTree<T extends Comparable<T> | number | string> implements Tree<T> {
       } else {
         this._parent._right = undefined;
       }
+
+      // Because a node can be deleted from anywhere in the tree directly (without calling the operation on the root
+      // node), we must walk up the tree and adjust sizes of all parents.
+      let p: BinaryTree<T> | undefined;
+      for (p = this._parent; p; p = p._parent) {
+        --p._size;
+      }
+
       this._parent = undefined;
-      return true;
+      return;
     }
 
     // This is not a leaf so it is guaranteed to have either a left or right.  If it has a left, it is guaranteed to
